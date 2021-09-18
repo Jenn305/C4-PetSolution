@@ -17,7 +17,7 @@ namespace c4_model_design
             const string apiSecret = "";
 
             StructurizrClient structurizrClient = new StructurizrClient(apiKey, apiSecret);
-            Workspace workspace = new Workspace("Design - C4 Model - Sistema de Monitoreo", "Sistema de Monitoreo del Traslado Aéreo de Vacunas SARS-CoV-2");
+            Workspace workspace = new Workspace("Software Design & Patterns - C4 Model - Sistema de Monitoreo", "Sistema de Monitoreo del Traslado Aéreo de Vacunas SARS-CoV-2");
             Model model = workspace.Model;
 
             SoftwareSystem monitoringSystem = model.AddSoftwareSystem("Monitoreo del Traslado Aéreo de Vacunas SARS-CoV-2", "Permite el seguimiento y monitoreo del traslado aéreo a nuestro país de las vacunas para la COVID-19.");
@@ -54,7 +54,7 @@ namespace c4_model_design
             Container mobileApplication = monitoringSystem.AddContainer("Mobile App", "Permite a los usuarios visualizar un dashboard con el resumen de toda la información del traslado de los lotes de vacunas.", "Flutter");
             Container webApplication = monitoringSystem.AddContainer("Web App", "Permite a los usuarios visualizar un dashboard con el resumen de toda la información del traslado de los lotes de vacunas.", "Flutter Web");
             Container landingPage = monitoringSystem.AddContainer("Landing Page", "", "Flutter Web");
-            Container apiRest = monitoringSystem.AddContainer("API Rest", "API Rest", "Spring Boot port 8080");
+            Container apiRest = monitoringSystem.AddContainer("API Rest", "API Rest", "NodeJS (NestJS) port 8080");
             Container flightPlanningContext = monitoringSystem.AddContainer("Flight Planning Context", "Bounded Context del Microservicio de Planificación de Vuelos", "Spring Boot port 8081");
             Container airportContext = monitoringSystem.AddContainer("Airport Context", "Bounded Context del Microservicio de información de Aeropuertos", "Spring Boot port 8082");
             Container aircraftInventoryContext = monitoringSystem.AddContainer("Aircraft Inventory Context", "Bounded Context del Microservicio de Inventario de Aviones", "Spring Boot port 8083");
@@ -69,17 +69,18 @@ namespace c4_model_design
             mobileApplication.Uses(apiRest, "API Request", "JSON/HTTPS");
             webApplication.Uses(apiRest, "API Request", "JSON/HTTPS");
 
-            apiRest.Uses(flightPlanningContext, "API Request", "JSON/HTTPS");
-            apiRest.Uses(airportContext, "API Request", "JSON/HTTPS");
-            apiRest.Uses(aircraftInventoryContext, "API Request", "JSON/HTTPS");
-            apiRest.Uses(vaccinesInventoryContext, "API Request", "JSON/HTTPS");
-            apiRest.Uses(monitoringContext, "API Request", "JSON/HTTPS");
+            apiRest.Uses(flightPlanningContext, "", "");
+            apiRest.Uses(airportContext, "", "");
+            apiRest.Uses(aircraftInventoryContext, "", "");
+            apiRest.Uses(vaccinesInventoryContext, "", "");
+            apiRest.Uses(monitoringContext, "", "");
             
             flightPlanningContext.Uses(database, "", "JDBC");
             airportContext.Uses(database, "", "JDBC");
             aircraftInventoryContext.Uses(database, "", "JDBC");
             vaccinesInventoryContext.Uses(database, "", "JDBC");
             monitoringContext.Uses(database, "", "JDBC");
+            
             monitoringContext.Uses(googleMaps, "API Request", "JSON/HTTPS");
             monitoringContext.Uses(aircraftSystem, "API Request", "JSON/HTTPS");
 
@@ -100,7 +101,6 @@ namespace c4_model_design
             styles.Add(new ElementStyle("LandingPage") { Background = "#929000", Color = "#ffffff", Shape = Shape.WebBrowser, Icon = "" });
             styles.Add(new ElementStyle("APIRest") { Shape = Shape.RoundedBox, Background = "#0000ff", Color = "#ffffff", Icon = "" });
             styles.Add(new ElementStyle("Database") { Shape = Shape.Cylinder, Background = "#ff0000", Color = "#ffffff", Icon = "" });
-            styles.Add(new ElementStyle("MessageBus") { Width = 850, Background = "#fd8208", Color = "#ffffff", Shape = Shape.Pipe, Icon = "" });
             styles.Add(new ElementStyle("FlightPlanningContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
             styles.Add(new ElementStyle("AirportContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
             styles.Add(new ElementStyle("AircraftInventoryContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
@@ -112,12 +112,12 @@ namespace c4_model_design
             containerView.AddAllElements();
 
             // 3. Diagrama de Componentes
-            Component monitoringController = monitoringContext.AddComponent("Monitoring Controller", "REST API endpoints de monitoreo.", "Spring Boot REST Controller");
-            Component monitoringApplicationService = monitoringContext.AddComponent("Monitoring Application Service", "Provee métodos para el monitoreo, pertenece a la capa Application de DDD", "Spring Component");
-            Component flightRepository = monitoringContext.AddComponent("Flight Repository", "Información del vuelo", "Spring Component");
-            Component vaccineLoteRepository = monitoringContext.AddComponent("VaccineLote Repository", "Información de lote de vacunas", "Spring Component");
-            Component locationRepository = monitoringContext.AddComponent("Location Repository", "Ubicación del vuelo", "Spring Component");
-            Component aircraftSystemFacade = monitoringContext.AddComponent("Aircraft System Facade", "", "Spring Component");
+            Component monitoringController = monitoringContext.AddComponent("Monitoring Controller", "REST API endpoints de monitoreo.", "NodeJS (NestJS) REST Controller");
+            Component monitoringApplicationService = monitoringContext.AddComponent("Monitoring Application Service", "Provee métodos para el monitoreo, pertenece a la capa Application de DDD", "NestJS Component");
+            Component flightRepository = monitoringContext.AddComponent("Flight Repository", "Información del vuelo", "NestJS Component");
+            Component vaccineLoteRepository = monitoringContext.AddComponent("VaccineLote Repository", "Información de lote de vacunas", "NestJS Component");
+            Component locationRepository = monitoringContext.AddComponent("Location Repository", "Ubicación del vuelo", "NestJS Component");
+            Component aircraftSystemFacade = monitoringContext.AddComponent("Aircraft System Facade", "", "NestJS Component");
 
             // Tags
             monitoringController.AddTags("MonitoringController");
@@ -145,6 +145,7 @@ namespace c4_model_design
             flightRepository.Uses(database, "", "JDBC");
             vaccineLoteRepository.Uses(database, "", "JDBC");
             locationRepository.Uses(database, "", "JDBC");
+            
             locationRepository.Uses(googleMaps, "", "JSON/HTTPS");
             aircraftSystemFacade.Uses(aircraftSystem, "JSON/HTTPS");
             
