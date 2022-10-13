@@ -17,8 +17,11 @@ namespace c4_model_design
             const string apiSecret = "";
 
             StructurizrClient structurizrClient = new StructurizrClient(apiKey, apiSecret);
+
             Workspace workspace = new Workspace("Software Design & Patterns - C4 Model - Sistema de Monitoreo", "Sistema de Monitoreo del Traslado Aéreo de Vacunas SARS-CoV-2");
+
             ViewSet viewSet = workspace.Views;
+
             Model model = workspace.Model;
 
             // 1. Diagrama de Contexto
@@ -31,13 +34,9 @@ namespace c4_model_design
 
             ciudadano.Uses(monitoringSystem, "Realiza consultas para mantenerse al tanto de la planificación de los vuelos hasta la llegada del lote de vacunas al Perú");
             admin.Uses(monitoringSystem, "Realiza consultas para mantenerse al tanto de la planificación de los vuelos hasta la llegada del lote de vacunas al Perú");
+
             monitoringSystem.Uses(aircraftSystem, "Consulta información en tiempo real por el avión del vuelo");
             monitoringSystem.Uses(googleMaps, "Usa la API de google maps");
-            
-            SystemContextView contextView = viewSet.CreateSystemContextView(monitoringSystem, "Contexto", "Diagrama de contexto");
-            contextView.PaperSize = PaperSize.A4_Landscape;
-            contextView.AddAllSoftwareSystems();
-            contextView.AddAllPeople();
 
             // Tags
             ciudadano.AddTags("Ciudadano");
@@ -52,6 +51,11 @@ namespace c4_model_design
             styles.Add(new ElementStyle("SistemaMonitoreo") { Background = "#008f39", Color = "#ffffff", Shape = Shape.RoundedBox });
             styles.Add(new ElementStyle("GoogleMaps") { Background = "#90714c", Color = "#ffffff", Shape = Shape.RoundedBox });
             styles.Add(new ElementStyle("AircraftSystem") { Background = "#2f95c7", Color = "#ffffff", Shape = Shape.RoundedBox });
+
+            SystemContextView contextView = viewSet.CreateSystemContextView(monitoringSystem, "Contexto", "Diagrama de contexto");
+            contextView.PaperSize = PaperSize.A4_Landscape;
+            contextView.AddAllSoftwareSystems();
+            contextView.AddAllPeople();
 
             // 2. Diagrama de Contenedores
             Container mobileApplication = monitoringSystem.AddContainer("Mobile App", "Permite a los usuarios visualizar un dashboard con el resumen de toda la información del traslado de los lotes de vacunas.", "Swift UI");
@@ -115,7 +119,7 @@ namespace c4_model_design
             styles.Add(new ElementStyle("AircraftInventoryContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
             styles.Add(new ElementStyle("VaccinesInventoryContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
             styles.Add(new ElementStyle("MonitoringContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
-
+            
             ContainerView containerView = viewSet.CreateContainerView(monitoringSystem, "Contenedor", "Diagrama de contenedores");
             contextView.PaperSize = PaperSize.A4_Landscape;
             containerView.AddAllElements();
@@ -135,8 +139,8 @@ namespace c4_model_design
 
             apiRest.Uses(monitoringController, "", "JSON/HTTPS");
             monitoringController.Uses(monitoringApplicationService, "Invoca métodos de monitoreo");
-            monitoringController.Uses(aircraftSystemFacade, "Usa");
 
+            monitoringApplicationService.Uses(aircraftSystemFacade, "Usa");
             monitoringApplicationService.Uses(domainLayer, "Usa", "");
             monitoringApplicationService.Uses(flightRepository, "", "");
             monitoringApplicationService.Uses(vaccineLoteRepository, "", "");
