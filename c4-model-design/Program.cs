@@ -7,10 +7,10 @@ namespace c4_model_design
     {
         static void Main(string[] args)
         {
-            Banking();
+            RenderModels();
         }
 
-        static void Banking()
+        static void RenderModels()
         {
             const long workspaceId = 0;
             const string apiKey = "";
