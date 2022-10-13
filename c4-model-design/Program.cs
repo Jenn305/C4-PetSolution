@@ -51,7 +51,7 @@ namespace c4_model_design
             styles.Add(new ElementStyle("SistemaMonitoreo") { Background = "#008f39", Color = "#ffffff", Shape = Shape.RoundedBox });
             styles.Add(new ElementStyle("GoogleMaps") { Background = "#90714c", Color = "#ffffff", Shape = Shape.RoundedBox });
             styles.Add(new ElementStyle("AircraftSystem") { Background = "#2f95c7", Color = "#ffffff", Shape = Shape.RoundedBox });
-
+            
             SystemContextView contextView = viewSet.CreateSystemContextView(monitoringSystem, "Contexto", "Diagrama de contexto");
             contextView.PaperSize = PaperSize.A4_Landscape;
             contextView.AddAllSoftwareSystems();
@@ -68,6 +68,7 @@ namespace c4_model_design
             Container aircraftInventoryContext = monitoringSystem.AddContainer("Aircraft Inventory Context", "Bounded Context de Inventario de Aviones", "NodeJS (NestJS)");
             Container vaccinesInventoryContext = monitoringSystem.AddContainer("Vaccines Inventory Context", "Bounded Context de Inventario de Vacunas", "NodeJS (NestJS)");
             Container monitoringContext = monitoringSystem.AddContainer("Monitoring Context", "Bounded Context de Monitoreo en tiempo real del status y ubicación del vuelo que transporta las vacunas", "NodeJS (NestJS)");
+            Container securityContext = monitoringSystem.AddContainer("Security Context", "Bounded Context de Seguridad", "NodeJS (NestJS)");
 
             Container database = monitoringSystem.AddContainer("Database", "", "Oracle");
             
@@ -87,13 +88,15 @@ namespace c4_model_design
             apiRest.Uses(aircraftInventoryContext, "", "");
             apiRest.Uses(vaccinesInventoryContext, "", "");
             apiRest.Uses(monitoringContext, "", "");
-            
+            apiRest.Uses(securityContext, "", "");
+
             flightPlanningContext.Uses(database, "", "");
             airportContext.Uses(database, "", "");
             aircraftInventoryContext.Uses(database, "", "");
             vaccinesInventoryContext.Uses(database, "", "");
             monitoringContext.Uses(database, "", "");
-            
+            securityContext.Uses(database, "", "");
+
             monitoringContext.Uses(googleMaps, "API Request", "JSON/HTTPS");
             monitoringContext.Uses(aircraftSystem, "API Request", "JSON/HTTPS");
 
@@ -103,23 +106,23 @@ namespace c4_model_design
             landingPage.AddTags("LandingPage");
             apiRest.AddTags("APIRest");
             database.AddTags("Database");
-            flightPlanningContext.AddTags("FlightPlanningContext");
-            airportContext.AddTags("AirportContext");
-            aircraftInventoryContext.AddTags("AircraftInventoryContext");
-            vaccinesInventoryContext.AddTags("VaccinesInventoryContext");
-            monitoringContext.AddTags("MonitoringContext");
+
+            string contextTag = "Context";
+
+            flightPlanningContext.AddTags(contextTag);
+            airportContext.AddTags(contextTag);
+            aircraftInventoryContext.AddTags(contextTag);
+            vaccinesInventoryContext.AddTags(contextTag);
+            monitoringContext.AddTags(contextTag);
+            securityContext.AddTags(contextTag);
 
             styles.Add(new ElementStyle("MobileApp") { Background = "#9d33d6", Color = "#ffffff", Shape = Shape.MobileDevicePortrait, Icon = "" });
             styles.Add(new ElementStyle("WebApp") { Background = "#9d33d6", Color = "#ffffff", Shape = Shape.WebBrowser, Icon = "" });
             styles.Add(new ElementStyle("LandingPage") { Background = "#929000", Color = "#ffffff", Shape = Shape.WebBrowser, Icon = "" });
             styles.Add(new ElementStyle("APIRest") { Shape = Shape.RoundedBox, Background = "#0000ff", Color = "#ffffff", Icon = "" });
             styles.Add(new ElementStyle("Database") { Shape = Shape.Cylinder, Background = "#ff0000", Color = "#ffffff", Icon = "" });
-            styles.Add(new ElementStyle("FlightPlanningContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
-            styles.Add(new ElementStyle("AirportContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
-            styles.Add(new ElementStyle("AircraftInventoryContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
-            styles.Add(new ElementStyle("VaccinesInventoryContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
-            styles.Add(new ElementStyle("MonitoringContext") { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
-            
+            styles.Add(new ElementStyle(contextTag) { Shape = Shape.Hexagon, Background = "#facc2e", Icon = "" });
+
             ContainerView containerView = viewSet.CreateContainerView(monitoringSystem, "Contenedor", "Diagrama de contenedores");
             contextView.PaperSize = PaperSize.A4_Landscape;
             containerView.AddAllElements();
@@ -140,8 +143,8 @@ namespace c4_model_design
             apiRest.Uses(monitoringController, "", "JSON/HTTPS");
             monitoringController.Uses(monitoringApplicationService, "Invoca métodos de monitoreo");
 
-            monitoringApplicationService.Uses(aircraftSystemFacade, "Usa");
             monitoringApplicationService.Uses(domainLayer, "Usa", "");
+            monitoringApplicationService.Uses(aircraftSystemFacade, "Usa");
             monitoringApplicationService.Uses(flightRepository, "", "");
             monitoringApplicationService.Uses(vaccineLoteRepository, "", "");
             monitoringApplicationService.Uses(locationRepository, "", "");
