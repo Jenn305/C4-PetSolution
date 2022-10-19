@@ -9,16 +9,16 @@ namespace c4_model_design
         {
             RenderModels();
         }
-
+        
         static void RenderModels()
         {
-            const long workspaceId = 0;
-            const string apiKey = "";
-            const string apiSecret = "";
+            const long workspaceId = 77366;
+            const string apiKey = "17c1766c-d97d-4b1f-a777-941023293b15";
+            const string apiSecret = "2113c618-1eb6-4b31-ad26-7aef4d5d5cf8";
 
             StructurizrClient structurizrClient = new StructurizrClient(apiKey, apiSecret);
 
-            Workspace workspace = new Workspace("Software Design & Patterns - C4 Model - Sistema de Monitoreo", "Sistema de Monitoreo del Traslado Aéreo de Vacunas SARS-CoV-2");
+            Workspace workspace = new Workspace("Software Design & Patterns - C4 Model - PetCare", "Applicación ");
 
             ViewSet viewSet = workspace.Views;
 
@@ -29,25 +29,25 @@ namespace c4_model_design
             SoftwareSystem googleMaps = model.AddSoftwareSystem("Google Maps", "Plataforma que ofrece una REST API de información geo referencial.");
             SoftwareSystem aircraftSystem = model.AddSoftwareSystem("Aircraft System", "Permite transmitir información en tiempo real por el avión del vuelo a nuestro sistema");
 
-            Person ciudadano = model.AddPerson("Ciudadano", "Ciudadano peruano.");
-            Person admin = model.AddPerson("Admin", "User Admin.");
+            Person tienda = model.AddPerson("tienda", "tienda peruano.");
+            Person usuario = model.AddPerson("usuario", "User usuario.");
 
-            ciudadano.Uses(monitoringSystem, "Realiza consultas para mantenerse al tanto de la planificación de los vuelos hasta la llegada del lote de vacunas al Perú");
-            admin.Uses(monitoringSystem, "Realiza consultas para mantenerse al tanto de la planificación de los vuelos hasta la llegada del lote de vacunas al Perú");
+            tienda.Uses(monitoringSystem, "Realiza consultas para mantenerse al tanto de la planificación de los vuelos hasta la llegada del lote de vacunas al Perú");
+            usuario.Uses(monitoringSystem, "Realiza consultas para mantenerse al tanto de la planificación de los vuelos hasta la llegada del lote de vacunas al Perú");
 
             monitoringSystem.Uses(aircraftSystem, "Consulta información en tiempo real por el avión del vuelo");
             monitoringSystem.Uses(googleMaps, "Usa la API de google maps");
 
             // Tags
-            ciudadano.AddTags("Ciudadano");
-            admin.AddTags("Admin");
+            tienda.AddTags("tienda");
+            usuario.AddTags("usuario");
             monitoringSystem.AddTags("SistemaMonitoreo");
             googleMaps.AddTags("GoogleMaps");
             aircraftSystem.AddTags("AircraftSystem");
 
             Styles styles = viewSet.Configuration.Styles;
-            styles.Add(new ElementStyle("Ciudadano") { Background = "#0a60ff", Color = "#ffffff", Shape = Shape.Person });
-            styles.Add(new ElementStyle("Admin") { Background = "#aa60af", Color = "#ffffff", Shape = Shape.Person });
+            styles.Add(new ElementStyle("tienda") { Background = "#0a60ff", Color = "#ffffff", Shape = Shape.Person });
+            styles.Add(new ElementStyle("usuario") { Background = "#aa60af", Color = "#ffffff", Shape = Shape.Person });
             styles.Add(new ElementStyle("SistemaMonitoreo") { Background = "#008f39", Color = "#ffffff", Shape = Shape.RoundedBox });
             styles.Add(new ElementStyle("GoogleMaps") { Background = "#90714c", Color = "#ffffff", Shape = Shape.RoundedBox });
             styles.Add(new ElementStyle("AircraftSystem") { Background = "#2f95c7", Color = "#ffffff", Shape = Shape.RoundedBox });
@@ -59,7 +59,7 @@ namespace c4_model_design
 
             // 2. Diagrama de Contenedores
             Container mobileApplication = monitoringSystem.AddContainer("Mobile App", "Permite a los usuarios visualizar un dashboard con el resumen de toda la información del traslado de los lotes de vacunas.", "Swift UI");
-            Container webApplication = monitoringSystem.AddContainer("Web App", "Permite a los usuarios visualizar un dashboard con el resumen de toda la información del traslado de los lotes de vacunas.", "React");
+            //Container webApplication = monitoringSystem.AddContainer("Web App", "Permite a los usuarios visualizar un dashboard con el resumen de toda la información del traslado de los lotes de vacunas.", "React");
             Container landingPage = monitoringSystem.AddContainer("Landing Page", "", "React");
             Container apiRest = monitoringSystem.AddContainer("API REST", "API Rest", "NodeJS (NestJS) port 8080");
 
@@ -72,16 +72,16 @@ namespace c4_model_design
 
             Container database = monitoringSystem.AddContainer("Database", "", "Oracle");
             
-            ciudadano.Uses(mobileApplication, "Consulta");
-            ciudadano.Uses(webApplication, "Consulta");
-            ciudadano.Uses(landingPage, "Consulta");
+            tienda.Uses(mobileApplication, "Consulta");
+            //tienda.Uses(webApplication, "Consulta");
+            tienda.Uses(landingPage, "Consulta");
 
-            admin.Uses(mobileApplication, "Consulta");
-            admin.Uses(webApplication, "Consulta");
-            admin.Uses(landingPage, "Consulta");
+            usuario.Uses(mobileApplication, "Consulta");
+            //usuario.Uses(webApplication, "Consulta");
+            usuario.Uses(landingPage, "Consulta");
 
             mobileApplication.Uses(apiRest, "API Request", "JSON/HTTPS");
-            webApplication.Uses(apiRest, "API Request", "JSON/HTTPS");
+            //webApplication.Uses(apiRest, "API Request", "JSON/HTTPS");
 
             apiRest.Uses(flightPlanningContext, "", "");
             apiRest.Uses(airportContext, "", "");
@@ -102,7 +102,7 @@ namespace c4_model_design
 
             // Tags
             mobileApplication.AddTags("MobileApp");
-            webApplication.AddTags("WebApp");
+            //webApplication.AddTags("WebApp");
             landingPage.AddTags("LandingPage");
             apiRest.AddTags("APIRest");
             database.AddTags("Database");
@@ -179,7 +179,7 @@ namespace c4_model_design
             ComponentView componentView = viewSet.CreateComponentView(monitoringContext, "Components", "Component Diagram");
             componentView.PaperSize = PaperSize.A4_Landscape;
             componentView.Add(mobileApplication);
-            componentView.Add(webApplication);
+            //componentView.Add(webApplication);
             componentView.Add(apiRest);
             componentView.Add(database);
             componentView.Add(aircraftSystem);
