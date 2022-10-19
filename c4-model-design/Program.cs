@@ -5,7 +5,6 @@ namespace c4_model_design
 {
     class Program
     {
-        
         static void Main(string[] args)
         {
             RenderModels();
@@ -13,50 +12,65 @@ namespace c4_model_design
 
         static void RenderModels()
         {
-            const long workspaceId = 0;
-            const string apiKey = "";
-            const string apiSecret = "";
+            const long workspaceId = 77366;
+            const string apiKey = "17c1766c-d97d-4b1f-a777-941023293b15";
+            const string apiSecret = "2113c618-1eb6-4b31-ad26-7aef4d5d5cf8";
+            StructurizrClient structurizrClient = new StructurizrClient(apiKey, apiSecret); 
 
-            StructurizrClient structurizrClient = new StructurizrClient(apiKey, apiSecret);
-
-            Workspace workspace = new Workspace("Software Design & Patterns - C4 Model - Sistema de Monitoreo", "Sistema de Monitoreo del Traslado Aéreo de Vacunas SARS-CoV-2");
+            Workspace workspace = new Workspace("C4 Model- Sistema de intermediarios PetCare", "Sistema de intermediarios en el servicio de mascotas, PetCare");
 
             ViewSet viewSet = workspace.Views;
 
-            Model model = workspace.Model;
+            Model model = workspace.Model; //*
 
-            // 1. Diagrama de Contexto
-            SoftwareSystem monitoringSystem = model.AddSoftwareSystem("Monitoreo del Traslado Aéreo de Vacunas SARS-CoV-2", "Permite el seguimiento y monitoreo del traslado aéreo a nuestro país de las vacunas para la COVID-19.");
-            SoftwareSystem googleMaps = model.AddSoftwareSystem("Google Maps", "Plataforma que ofrece una REST API de información geo referencial.");
-            SoftwareSystem aircraftSystem = model.AddSoftwareSystem("Aircraft System", "Permite transmitir información en tiempo real por el avión del vuelo a nuestro sistema");
+            // 1. DIAGRAMA DE CONTEXTO
+            SoftwareSystem monitoringSystem = model.AddSoftwareSystem("Sistema de intermediarios en el servicio de mascotas, PetCare", "Permite dar a conocer servicios que brinden cuidado a las mascotas");
+            SoftwareSystem googleMaps = model.AddSoftwareSystem("Google Maps", "Plataforma que ofrece una REST API de información geo referencial de todos nuestros usuarios.");
 
-            Person ciudadano = model.AddPerson("Ciudadano", "Ciudadano peruano.");
+            Person dueno_mascota = model.AddPerson("Dueño de mascota", "Ciudadano peruano.");
+            Person miembro_teamcare = model.AddPerson("Miembro de TeamCare", "Ciudadano peruano.");
+            Person persona_que_da_adopcion = model.AddPerson("Personas que dan en adopcion a mascotas", "Ciudadano peruano.");
+            Person amigo_invitado = model.AddPerson("Amigo Invitado", "Ciudadano peruano.");
+            Person tienda = model.AddPerson("Tiendas", "Negocios que ofrecen servicio y/o productos para mascotas.");
+            Person centro_adopcion = model.AddPerson("Centro de Adopcion", "Centros de adopcion disponibles y seguros.");
             Person admin = model.AddPerson("Admin", "User Admin.");
 
-            ciudadano.Uses(monitoringSystem, "Realiza consultas para mantenerse al tanto de la planificación de los vuelos hasta la llegada del lote de vacunas al Perú");
-            admin.Uses(monitoringSystem, "Realiza consultas para mantenerse al tanto de la planificación de los vuelos hasta la llegada del lote de vacunas al Perú");
+            dueno_mascota.Uses(monitoringSystem, "Realiza consultas para conocer tiendas y/o personas que brinden servicios parasu mascota");
+            miembro_teamcare.Uses(monitoringSystem, "Realiza un perfil para ofrecer un servicio sencillo para con las mascotas");
+            persona_que_da_adopcion.Uses(monitoringSystem, "Da a conocer crias de sus mascotas para que otros puedan adoptarlas");
+            amigo_invitado.Uses(monitoringSystem, "Se crea un perfil para poder acceder a todas lasfuncionalidades  de la app");
+            tienda.Uses(monitoringSystem, "Da a concer su negocio para su posterior visita en su pagina oficial");
+            centro_adopcion.Uses(monitoringSystem, "Da a conocer el centro para su posterior visita en su pagina oficial");
 
-            monitoringSystem.Uses(aircraftSystem, "Consulta información en tiempo real por el avión del vuelo");
+            admin.Uses(monitoringSystem, "Realiza consultas para mantenerse al tanto de la interaccion entre los usuarios que ofrecen y los que buscan servicios y/o negocios");
+
+
             monitoringSystem.Uses(googleMaps, "Usa la API de google maps");
 
             // Tags
-            ciudadano.AddTags("Ciudadano");
+            dueno_mascota.AddTags("Ciudadano");
+            miembro_teamcare.AddTags("Ciudadano");
+            persona_que_da_adopcion.AddTags("Ciudadano");
+            amigo_invitado.AddTags("Ciudadano");
+            tienda.AddTags("Ciudadano");
+            centro_adopcion.AddTags("Ciudadano");
             admin.AddTags("Admin");
+
             monitoringSystem.AddTags("SistemaMonitoreo");
             googleMaps.AddTags("GoogleMaps");
-            aircraftSystem.AddTags("AircraftSystem");
 
             Styles styles = viewSet.Configuration.Styles;
             styles.Add(new ElementStyle("Ciudadano") { Background = "#0a60ff", Color = "#ffffff", Shape = Shape.Person });
             styles.Add(new ElementStyle("Admin") { Background = "#aa60af", Color = "#ffffff", Shape = Shape.Person });
             styles.Add(new ElementStyle("SistemaMonitoreo") { Background = "#008f39", Color = "#ffffff", Shape = Shape.RoundedBox });
             styles.Add(new ElementStyle("GoogleMaps") { Background = "#90714c", Color = "#ffffff", Shape = Shape.RoundedBox });
-            styles.Add(new ElementStyle("AircraftSystem") { Background = "#2f95c7", Color = "#ffffff", Shape = Shape.RoundedBox });
-            
+
             SystemContextView contextView = viewSet.CreateSystemContextView(monitoringSystem, "Contexto", "Diagrama de contexto");
             contextView.PaperSize = PaperSize.A4_Landscape;
             contextView.AddAllSoftwareSystems();
             contextView.AddAllPeople();
+
+            //*
 
             // 2. Diagrama de Contenedores
             Container mobileApplication = monitoringSystem.AddContainer("Mobile App", "Permite a los usuarios visualizar un dashboard con el resumen de toda la información del traslado de los lotes de vacunas.", "Swift UI");
@@ -72,10 +86,10 @@ namespace c4_model_design
             Container securityContext = monitoringSystem.AddContainer("Security Context", "Bounded Context de Seguridad", "NodeJS (NestJS)");
 
             Container database = monitoringSystem.AddContainer("Database", "", "Oracle");
-            
-            ciudadano.Uses(mobileApplication, "Consulta");
-            ciudadano.Uses(webApplication, "Consulta");
-            ciudadano.Uses(landingPage, "Consulta");
+
+            dueno_mascota.Uses(mobileApplication, "Consulta");
+            dueno_mascota.Uses(webApplication, "Consulta");
+            dueno_mascota.Uses(landingPage, "Consulta");
 
             admin.Uses(mobileApplication, "Consulta");
             admin.Uses(webApplication, "Consulta");
@@ -99,7 +113,7 @@ namespace c4_model_design
             securityContext.Uses(database, "", "");
 
             monitoringContext.Uses(googleMaps, "API Request", "JSON/HTTPS");
-            monitoringContext.Uses(aircraftSystem, "API Request", "JSON/HTTPS");
+            //monitoringContext.Uses(aircraftSystem, "API Request", "JSON/HTTPS");
 
             // Tags
             mobileApplication.AddTags("MobileApp");
@@ -128,7 +142,7 @@ namespace c4_model_design
             contextView.PaperSize = PaperSize.A4_Landscape;
             containerView.AddAllElements();
 
-            // 3. Diagrama de Componentes (Monitoring Context)_visualstudio
+            // 3. Diagrama de Componentes (Monitoring Context)
             Component domainLayer = monitoringContext.AddComponent("Domain Layer", "", "NodeJS (NestJS)");
 
             Component monitoringController = monitoringContext.AddComponent("MonitoringController", "REST API endpoints de monitoreo.", "NodeJS (NestJS) REST Controller");
@@ -156,8 +170,8 @@ namespace c4_model_design
 
             locationRepository.Uses(googleMaps, "", "JSON/HTTPS");
 
-            aircraftSystemFacade.Uses(aircraftSystem, "JSON/HTTPS");
-            
+            //aircraftSystemFacade.Uses(aircraftSystem, "JSON/HTTPS");
+
             // Tags
             domainLayer.AddTags("DomainLayer");
             monitoringController.AddTags("MonitoringController");
@@ -166,7 +180,7 @@ namespace c4_model_design
             vaccineLoteRepository.AddTags("VaccineLoteRepository");
             locationRepository.AddTags("LocationRepository");
             aircraftSystemFacade.AddTags("AircraftSystemFacade");
-            
+
             styles.Add(new ElementStyle("DomainLayer") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
             styles.Add(new ElementStyle("MonitoringController") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
             styles.Add(new ElementStyle("MonitoringApplicationService") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
@@ -183,10 +197,75 @@ namespace c4_model_design
             componentView.Add(webApplication);
             componentView.Add(apiRest);
             componentView.Add(database);
-            componentView.Add(aircraftSystem);
+            //componentView.Add(aircraftSystem);
             componentView.Add(googleMaps);
             componentView.AddAllComponents();
 
+
+            //4.Component 2
+             monitoringContext.AddComponent("Domain Layer2", "", "NodeJS (NestJS)");
+
+             monitoringContext.AddComponent("MonitoringController2", "REST API endpoyints de monitoreo.", "NodeJS (NestJS) REST Controller");
+
+             monitoringContext.AddComponent("MonitoringApplicationService2", "Provee métodos para el monitoreo, pertenece a la capa Application de DDD", "NestJS Component");
+
+             monitoringContext.AddComponent("FlightRepository2", "Información del vuelo", "NestJS Component");
+             monitoringContext.AddComponent("VaccineLoteRepository2", "Información de lote de vacunas", "NestJS Component");
+             monitoringContext.AddComponent("LocationRepository2", "Ubicación del vuelo", "NestJS Component");
+
+             monitoringContext.AddComponent("Aircraft System Facade2", "", "NestJS Component");
+
+            apiRest.Uses(monitoringController, "", "JSON/HTTPS");
+            monitoringController.Uses(monitoringApplicationService, "Invoca métodos de monitoreo");
+
+            monitoringApplicationService.Uses(domainLayer, "Usa", "");
+            monitoringApplicationService.Uses(aircraftSystemFacade, "Usa");
+            monitoringApplicationService.Uses(flightRepository, "", "");
+            monitoringApplicationService.Uses(vaccineLoteRepository, "", "");
+            monitoringApplicationService.Uses(locationRepository, "", "");
+
+            flightRepository.Uses(database, "", "");
+            vaccineLoteRepository.Uses(database, "", "");
+            locationRepository.Uses(database, "", "");
+
+            locationRepository.Uses(googleMaps, "", "JSON/HTTPS");
+
+            //aircraftSystemFacade.Uses(aircraftSystem, "JSON/HTTPS");
+
+            // Tags
+            domainLayer.AddTags("DomainLayer");
+            monitoringController.AddTags("MonitoringController");
+            monitoringApplicationService.AddTags("MonitoringApplicationService");
+            flightRepository.AddTags("FlightRepository");
+            vaccineLoteRepository.AddTags("VaccineLoteRepository");
+            locationRepository.AddTags("LocationRepository");
+            aircraftSystemFacade.AddTags("AircraftSystemFacade");
+
+            styles.Add(new ElementStyle("DomainLayer2") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+            styles.Add(new ElementStyle("MonitoringController") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+            styles.Add(new ElementStyle("MonitoringApplicationService") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+            styles.Add(new ElementStyle("MonitoringDomainModel") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+            styles.Add(new ElementStyle("FlightStatus") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+            styles.Add(new ElementStyle("FlightRepository") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+            styles.Add(new ElementStyle("VaccineLoteRepository") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+            styles.Add(new ElementStyle("LocationRepository") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+            styles.Add(new ElementStyle("AircraftSystemFacade") { Shape = Shape.Component, Background = "#facc2e", Icon = "" });
+
+             viewSet.CreateComponentView(monitoringContext, "Components", "Component Diagram");
+            componentView.PaperSize = PaperSize.A4_Landscape;
+            componentView.Add(mobileApplication);
+            componentView.Add(webApplication);
+            componentView.Add(apiRest);
+            componentView.Add(database);
+            //componentView.Add(aircraftSystem);
+            componentView.Add(googleMaps);
+            componentView.AddAllComponents();
+
+
+
+
+
+            //obligatorio
             structurizrClient.UnlockWorkspace(workspaceId);
             structurizrClient.PutWorkspace(workspaceId, workspace);
         }
