@@ -128,7 +128,7 @@ namespace c4_model_design
             contextView.PaperSize = PaperSize.A4_Landscape;
             containerView.AddAllElements();
 
-            // 3. Diagrama de Componentes (Monitoring Context)
+            // 3. Diagrama de Componentes (Monitoring Context)_visualstudio
             Component domainLayer = monitoringContext.AddComponent("Domain Layer", "", "NodeJS (NestJS)");
 
             Component monitoringController = monitoringContext.AddComponent("MonitoringController", "REST API endpoints de monitoreo.", "NodeJS (NestJS) REST Controller");
